@@ -69,4 +69,10 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .title {
+    @apply text-4xl  md:text-6xl font-bold md:font-extrabold text-brand-foreground;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
 }
