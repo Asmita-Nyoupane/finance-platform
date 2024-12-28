@@ -46,7 +46,7 @@ model Account {
   @@map("accounts")
 }
 
-enum AccountType {
+ export enum AccountType {
   CURRENT
   SAVING
 }

@@ -4,7 +4,7 @@ import DashboardPage from './page'
 
 const DashboardLayout = () => {
     return (
-        <div className='flex flex-col  space-y-10 my-6'>
+        <div className='flex flex-col  space-y-10 '>
             <header className='title'>Dashboard</header>
             <Suspense fallback={
                 <BarLoader
