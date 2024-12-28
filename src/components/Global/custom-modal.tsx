@@ -3,6 +3,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import React from "react";
 
 type TProps = {
@@ -18,7 +19,7 @@ const CustomModal = ({ children, title, trigger, isOpen, onClose }: TProps) => {
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent aria-describedby="modal-description" className="p-8">
-                <h2 className="text-xl md:text-2xl font-semibold text-primary">{title}</h2>
+                <DialogTitle className="text-xl md:text-2xl font-semibold text-primary">{title}</DialogTitle>
                 {children}
             </DialogContent>
         </Dialog>

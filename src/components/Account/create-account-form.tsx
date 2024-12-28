@@ -44,13 +44,12 @@ const CreateAccountForm = ({ onClose }: TProps) => {
         },
     })
     const onSubmit = async (values: TAccountSchema) => {
-        console.log("🚀 ~ onSubmit ~ values:", values)
         await fn(values); // Call the API
-        if (!error && !loading && !!data) {
-            toast.success("Account created successfully");
-            onClose();
+        if (error && !!data && !loading) {
+            toast.error(error);
         } else {
-            console.error("Error creating account:", error);
+            toast.success("New account successfully")
+            onClose()
         }
     };
 
@@ -64,7 +63,7 @@ const CreateAccountForm = ({ onClose }: TProps) => {
                         <FormItem>
                             <FormLabel>Account Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Account Name" {...field} />
+                                <Input placeholder="Salary Account ..." {...field} />
                             </FormControl>
 
                             <FormMessage />
@@ -107,7 +106,7 @@ const CreateAccountForm = ({ onClose }: TProps) => {
                         <FormItem>
                             <FormLabel>Balance</FormLabel>
                             <FormControl>
-                                <Input type="number" placeholder="Account Balance" {...field} />
+                                <Input placeholder="0.0" {...field} />
                             </FormControl>
 
                             <FormMessage />
