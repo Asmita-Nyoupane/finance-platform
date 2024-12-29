@@ -30,6 +30,7 @@ import { createAccount } from "@/actions/dasboard.action"
 import { TAccount } from "@/types/global-types"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { capitaliize } from "@/lib/utils"
 type TProps = {
     onClose: () => void
 }
@@ -87,7 +88,7 @@ const CreateAccountForm = ({ onClose }: TProps) => {
                                 <SelectContent>
                                     {
                                         Object.values(AccountType).map((type) => (
-                                            <SelectItem className="lowercase" key={type} value={type}>{type}</SelectItem>
+                                            <SelectItem key={type} value={type}>{capitaliize(type)}</SelectItem>
                                         ))
                                     }
 

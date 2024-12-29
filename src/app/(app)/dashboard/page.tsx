@@ -1,4 +1,5 @@
-import { getAllAccounts } from '@/actions/dasboard.action';
+
+import { getAllAccounts } from '@/actions/account.action';
 import { Account, MyAccount } from '@/components/Account/account';
 
 
@@ -15,7 +16,7 @@ const DashboardPage = async () => {
                 <Account />
                 {!!accounts && accounts.length < 1 ? <div>No accounts found</div> :
                     accounts.map((acc) => {
-                        return acc ? <MyAccount key={acc.id} account={acc} /> : null
+                        return acc && "balance" in acc ? <MyAccount key={acc.id} account={{ ...acc, balance: Number(acc.balance) }} /> : null
                     })
                 }
             </section>

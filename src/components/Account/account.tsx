@@ -1,16 +1,18 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import CreateAccountForm from "@/components/Account/create-account-form";
 import CustomModal from "@/components/Global/custom-modal";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { TAsycncAccount } from "@/types/global-types";
+import { TAccount, TAsycncAccount } from "@/types/global-types";
 import Link from "next/link";
 import { Switch } from "../ui/switch";
 import { capitaliize } from "@/lib/utils";
 import { useFetch } from "@/hooks/use-fetch";
-import { upateAccount } from "@/actions/dasboard.action";
 import { toast } from "sonner";
+import { upateAccount } from "@/actions/account.action";
+import TransactionDetails from "../Transactions/transaction-detail";
+import { BarLoader } from "react-spinners";
 
 
 const Account = () => {
@@ -48,9 +50,11 @@ const Account = () => {
 
 
 
+type TProps = {
+    id: string
+}
 
-
-const MyAccount = ({ account }: { account: Omit<TAsycncAccount, "balance"> & { balance: number } }) => {
+const MyAccount = ({ account }: { account: TAccount & TProps }) => {
     const { id, name, balance, type, isDefault } = account
     const { data, loading, error, fn } = useFetch(upateAccount)
     const handleDefaultChange = async (e: React.MouseEvent<HTMLButtonElement>) => {

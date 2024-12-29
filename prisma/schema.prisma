@@ -51,17 +51,17 @@ model Account {
   SAVING
 }
 
-enum TransactionType {
+ export enum TransactionType {
   INCOME
   EXPENSE
 }
 
- enum TransactionStatus {
+  export enum TransactionStatus {
   COMPLETED
   PENDING
   FAILED
 }
-enum RecurringInterval {
+ export enum RecurringInterval {
   DAILY
   WEEKLY
   MONTHLY
