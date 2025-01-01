@@ -6,29 +6,57 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/ui/pagination"
-import React from 'react'
+} from "@/components/ui/pagination";
+import React, { useState } from "react";
 
-const TablePagination = () => {
+type TProps = {
+    setPage: (page: number) => void;
+    totalPage: number;
+};
+
+const TablePagination = ({ setPage, totalPage }: TProps) => {
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        setPage(page);
+    };
+
     return (
-        <Pagination>
-            <PaginationContent>
-                <PaginationItem>
-                    <PaginationPrevious href="#" />
+        <div className="flex justify-center items-center mt-4 w-full">
+            <Pagination className="flex items-center gap-2">
+                <PaginationItem className="list-none">
+                    <PaginationPrevious
+                        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                    />
                 </PaginationItem>
-                <PaginationItem>
-                    <PaginationLink href="#">1</PaginationLink>
+                {
+                    [...Array(totalPage)].map((_, index) => {
+                        const page = index + 1;
+                        return (
+                            <PaginationItem key={index} className="list-none">
+                                <PaginationLink
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-3 py-2 rounded-md hover:bg-primary-foreground hover:text-primary-background ${currentPage === page
+                                        ? "bg-primary-foreground text-primary-background"
+                                        : ""
+                                        }`}
+                                >
+                                    {page}
+                                </PaginationLink>
+                            </PaginationItem>
+                        );
+                    })
+                }
+                <PaginationEllipsis />
+                <PaginationItem className="list-none">
+                    <PaginationNext
+                        onClick={() => handlePageChange(Math.min(currentPage + 1, totalPage))}
+                    />
                 </PaginationItem>
-                <PaginationItem>
-                    <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                    <PaginationNext href="#" />
-                </PaginationItem>
-            </PaginationContent>
-        </Pagination>
+            </Pagination>
+        </div>
+    );
+};
 
-    )
-}
-
-export default TablePagination
+export default TablePagination;

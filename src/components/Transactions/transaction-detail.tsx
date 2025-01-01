@@ -12,6 +12,13 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Button } from '../ui/button';
+import { useFetch } from '@/hooks/use-fetch';
+import { bulkDeleteTransactions } from '@/actions/account.action';
+import { toast } from 'sonner';
+import { BarLoader } from 'react-spinners';
+import CustomAlertDialogConfirmation from '../Global/custom-alert';
+import TablePagination from './pagination';
+import { LIMIT } from '@/lib/constants';
 
 
 
@@ -24,9 +31,21 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
         field: "date",
         direction: "desc"
     })
-    const handleBulkDelete = () => {
+    const [page, setPage] = useState(1)
+    const { loading, fn } = useFetch(bulkDeleteTransactions)
+    const handleBulkDelete = async () => {
+        try {
+            await fn(selectedIds)
+            setSelectedIds([])
 
+            toast.success('Transactions deleted successfully')
+
+        } catch (error) {
+            toast.error('Error deleting transactions')
+        }
     }
+    const totalPage = Math.ceil(transactions.length / LIMIT)
+
     const handleClearFilter = () => {
         setSearchTerm(""),
             setRecurringFilter(""),
@@ -83,13 +102,19 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
 
 
     }, [searchTerm, recurringFilter, typeFilter, selectedIds, sortCofig])
+
+
+
+
+
     return (
-        <div className=' flex flex-col gap-10 '>
+        <div className=' flex flex-col gap-6 '>
+            {loading && <BarLoader loading={loading} color='#e5466b' className='w-full -mb-' width={"100%"} />}
             {/* filter */}
             <section className=' flex flex-col sm:flex-row gap-6'>
-                <div className='relative flexx-1'>
+                <div className='relative flex-1'>
                     <Search className='  absolute  left-2 top-2.5 size-4 text-muted-foreground ' />
-                    <Input type="text" placeholder="Search..." className="pl-7" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <Input type="text" placeholder="Search..." className="pl-7 " value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
                 <div className='flex gap-6'>
 
@@ -114,17 +139,21 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
                         </SelectContent>
                     </Select>
                 </div>
-                {selectedIds.length > 0 && <Button variant={'outline'} onClick={handleBulkDelete} className=' flex-center   hover:bg-red-400' >
+                {selectedIds.length > 0 && <CustomAlertDialogConfirmation trigger={<Button variant={'outline'} className=' flex-center   hover:bg-red-400' >
                     <Trash2 className='size-4 ml-2' /> Delete ({selectedIds.length})
                 </Button>}
+
+                    onConfirm={handleBulkDelete} description={`Are you sure you want to delete ${selectedIds.length} transactions?`}
+                />}
 
                 {
                     (searchTerm || recurringFilter || typeFilter) && <Button onClick={handleClearFilter} variant={'outline'} className=" flex-center hover:bg-brand" title='Clear Filter'> <X className='size-4 ml-2' />Clear</Button>
                 }
             </section>
             <div className="container mx-auto py-10">
-                <DataTable filteredAndSortedTransaction={filteredAndSortedTransaction} selectedIds={selectedIds} setSelectedIds={setSelectedIds} sortCofig={sortCofig} setSortConfig={setSortConfig} />
+                <DataTable filteredAndSortedTransaction={filteredAndSortedTransaction.slice(page, page + LIMIT)} selectedIds={selectedIds} setSelectedIds={setSelectedIds} sortCofig={sortCofig} setSortConfig={setSortConfig} deleteFn={fn} />
             </div>
+            <TablePagination setPage={setPage} totalPage={totalPage} />
         </div>
     )
 }
