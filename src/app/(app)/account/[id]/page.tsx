@@ -13,7 +13,7 @@ type TProps = {
 }
 
 const SingleAccountPage = async ({ params }: TProps) => {
-    const accountId = await params?.id
+    const accountId = params?.id
     if (!params || !accountId) return <Custom404 />
     const accountData = await getAccountWithTranaction(accountId)
     if (!accountData || !accountData.transactions) return <Custom404 />
@@ -24,7 +24,7 @@ const SingleAccountPage = async ({ params }: TProps) => {
                 <div className='flex justify-between items-end mb-3'>
 
                     <h2 className='title capitalize '>{account.name}</h2>
-                    <p className='subtitle'> $ {account.balance}</p>
+                    <p className='subtitle font-bold'> ${account.balance.toFixed(3)}</p>
                 </div>
                 <div className='flex justify-between items-end mb-3'>
                     <p className='text-muted-foreground font-semibold flex items-center'> Account Type : {capitaliize(account.type)}</p>
@@ -33,7 +33,7 @@ const SingleAccountPage = async ({ params }: TProps) => {
             </section>
 
             <Suspense fallback={
-                <BarLoader className="mt-4 w-full h-4" width={100} height={10} />
+                <BarLoader className="mt-4 w-full h-4" width={1000} height={10} />
             }>
                 <TransactionDetails transactions={(!!transactions && transactions?.length > 0) ? transactions : []} />
             </Suspense>

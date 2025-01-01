@@ -30,18 +30,21 @@ import { ChevronDown, ChevronUp, Clock, MoreHorizontal, Pencil, RefreshCcw, Tras
 import { capitaliize } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import CustomAlertDialogConfirmation from "../Global/custom-alert";
 type SortConfig = {
     field: string;
     direction: string;
 };
-
-const DataTable = ({ filteredAndSortedTransaction, selectedIds, setSelectedIds, sortCofig, setSortConfig }: {
+type TProps = {
     filteredAndSortedTransaction: TTransaction[];
     selectedIds: string[];
     setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
     sortCofig: SortConfig;
     setSortConfig: React.Dispatch<React.SetStateAction<SortConfig>>;
-}) => {
+    deleteFn: (ids: string[]) => void
+}
+
+const DataTable = ({ filteredAndSortedTransaction, selectedIds, setSelectedIds, sortCofig, setSortConfig, deleteFn }: TProps) => {
     const router = useRouter()
 
 
@@ -123,8 +126,8 @@ const DataTable = ({ filteredAndSortedTransaction, selectedIds, setSelectedIds, 
                 </TableHeader>
                 <TableBody className="py-10">
                     {filteredAndSortedTransaction.length === 0 ? (
-                        <TableRow className="col-sapn-7">
-                            <TableCell className="  py-8 text-lg text-muted-foreground font-semibold">
+                        <TableRow >
+                            <TableCell colSpan={7} className=" py-16 text-lg text-muted-foreground font-semibold text-center">
                                 {" "}
                                 No Transaction found
                             </TableCell>
@@ -206,13 +209,17 @@ const DataTable = ({ filteredAndSortedTransaction, selectedIds, setSelectedIds, 
                                                 <Pencil className="size-4 mr-2" />   Edit
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuLabel className="hover:text-red-500    cursor-pointer  group flex-center text-center mx-auto"
-                                            //  onClick={() => deleteFn([transaction.id])}
 
+                                            <CustomAlertDialogConfirmation trigger={<DropdownMenuLabel className="hover:text-red-500    cursor-pointer  group flex-center text-center mx-auto"
 
                                             >
+
                                                 <Trash2 className="size-4 mr-2" />   Delete
-                                            </DropdownMenuLabel>
+                                            </DropdownMenuLabel>}
+
+                                                onConfirm={() => deleteFn([transaction.id])} description={`Are you sure you want to delete  these transactions?`}
+                                            />
+
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

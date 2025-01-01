@@ -116,3 +116,59 @@ export const getAccountWithTranaction = async (accountId: string) => {
 
     }
 }
+
+
+export async function bulkDeleteTransactions(transactionIds: string[]): Promise<{ success: boolean, error?: string }> {
+
+    try {
+        const { userId } = await auth();
+        if (!userId) throw new Error('UnAuthorized');
+        const user = await db.user.findUnique({
+            where: {
+                clerkUserId: userId
+            }
+        })
+        if (!user) throw new Error('User not found');
+        const transaction = await db.transaction.findMany({
+            where: {
+                id: {
+                    in: transactionIds,
+
+                },
+                userId: user.id,
+            }
+        })
+
+        const accountBalanceChanges: Record<string, number> = transaction.reduce((acc, transaction) => {
+
+
+            const change = transaction.type === "INCOME" ? -transaction.amount : transaction.amount;
+            acc[transaction.accountId] = (acc[transaction.accountId] || 0) + Number(change);
+            return acc;
+        }, {} as Record<string, number>)
+
+        // Delete  transactions and update account balance in a transaction
+        await db.$transaction(async (tsx) => {
+
+            await tsx.transaction.deleteMany({
+                where: { id: { in: transactionIds } }
+            })
+            for (const [accountId, balanceChange] of Object.entries(accountBalanceChanges)) {
+                await tsx.account.update({
+                    where: { id: accountId },
+                    data: { balance: { increment: balanceChange } }
+                });
+            }
+            await tsx.transaction.deleteMany({
+                where: { id: { in: transactionIds } }
+            });
+        });
+        revalidatePath("/dashboard")
+        revalidatePath("/account/[id]")
+        return { success: true }
+    } catch (error: any) {
+        console.log("🚀 ~ bulkDeleteTransactions ~ error:", error)
+        return { success: false, error: error.message }
+
+    }
+}
