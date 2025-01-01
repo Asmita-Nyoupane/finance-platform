@@ -1,6 +1,7 @@
 
 import { getAccountWithTranaction } from '@/actions/account.action'
 import Custom404 from '@/app/not-found'
+import TransactionChart from '@/components/Transactions/transaction-chart'
 import TransactionDetails from '@/components/Transactions/transaction-detail'
 import { capitaliize } from '@/lib/utils'
 import { TAccountWithTransactions } from '@/types/global-types'
@@ -31,7 +32,7 @@ const SingleAccountPage = async ({ params }: TProps) => {
                     <p className='text-muted-foreground '>{account._count.transactions} Transactions</p>
                 </div>
             </section>
-
+            <TransactionChart transactions={(!!transactions && transactions?.length > 0) ? transactions : []} />
             <Suspense fallback={
                 <BarLoader className="mt-4 w-full h-4" width={1000} height={10} />
             }>
