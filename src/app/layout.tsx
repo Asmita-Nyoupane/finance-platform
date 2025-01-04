@@ -34,7 +34,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header />
-            <main className="min-h-screen container mx-auto px-4 my-6 ">
+            <main className="min-h-screen  ">
               <Toaster richColors />
 
               {children}

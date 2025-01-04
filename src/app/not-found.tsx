@@ -14,7 +14,7 @@ const Custom404 = () => {
                 <Frown size={50} className="text-brand-foreground" />
                 <h1 className="title">404</h1>
             </div> :
-                <Image src={"/not-found.png"} alt='not found image' height={300} width={300} className='object-cover'
+                <Image src={"/images/not-found.png"} alt='not found image' height={300} width={300} className='object-cover'
                 />}
             <p className="text-xl text-muted-foreground">
                 Oops! The page you’re looking for doesn’t exist.

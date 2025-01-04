@@ -12,11 +12,11 @@ import NavItem from "./nav-item";
 const Header = async () => {
     await checkUser();
     return (
-        <div className="sticky top-0 z-50 w-full shadow-lg backdrop-blur-md border-b">
+        <div className="sticky top-0 z-50  6rem  w-full shadow-lg backdrop-blur-md border-b">
             <nav className=" container mx-auto flex justify-between items-center p-4">
                 <Link href="/">
                     <Image
-                        src="/logo.png"
+                        src="/images/logo.png"
                         alt="logo"
                         width={100}
                         height={100}

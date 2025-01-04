@@ -26,7 +26,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }: TProps) => {
     const [newBudget, setNewBudget] = useState(initialBudget?.toString() || "")
     const { fn, error, loading } = useFetch(updateBudget)
 
-    const percentUsed = initialBudget ? (currentExpenses / initialBudget) * 100
+    const percentUsed = initialBudget ? ((currentExpenses / initialBudget) * 100)
         : 0
     const handleBudgetUpdate = async () => {
         try {
