@@ -16,10 +16,11 @@ const DashboardPage = async () => {
 
     }
 
+
     return (
         <div className='flex flex-col gap-10'>
             {
-                defaultAccount && <BudgetProgress initialBudget={budgetData?.budget?.amount || null} currentExpenses={budgetData?.currentEcpenses || 0} />
+                defaultAccount && <BudgetProgress initialBudget={budgetData?.budget?.amount || null} currentExpenses={budgetData?.currentExpenses || 0} />
             }
             <section className='flex flex-wrap gap-10'>
 
