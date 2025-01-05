@@ -1,10 +1,14 @@
 "use server"
+import { aj } from "@/app/api/arcjet/route";
 import { db } from "@/lib/prisma";
-import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
+import { seralizedTransaction } from "@/lib/utils";
 import { TTransaction } from "@/types/global-types";
+import { request } from "@arcjet/next";
 import { auth } from "@clerk/nextjs/server";
+
 import { revalidatePath } from "next/cache";
-import { start } from "repl";
+import { NextResponse } from "next/server";
+
 
 export const createTransaction = async (data: TTransaction) => {
     try {
@@ -17,6 +21,26 @@ export const createTransaction = async (data: TTransaction) => {
         })
         if (!user) throw new Error('User not found');
         // arject to add rate limit
+        const req = await request()
+
+        const decision = await aj.protect(req, { userId, requested: 1 }); // Deduct 1 tokens from the bucket
+
+        if (decision.isDenied()) {
+            if (decision.reason.isRateLimit()) {
+                const { remaining, reset } = decision.reason;
+                console.error({
+                    code: "RATE_limit_EXCEEDRD",
+                    details: {
+                        remaining,
+                        resetInSeconds: reset
+                    }
+                })
+                throw new Error("Tpp many request.Please try again later")
+            }
+            throw new Error("Request Blocked")
+        }
+
+
         const account = await db.account.findUnique({
             where: {
                 id: data.accountId,

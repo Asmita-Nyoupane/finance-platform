@@ -25,7 +25,7 @@ export const defaultCategories = [
         id: "business",
         name: "Business",
         type: "INCOME",
-        color: "#ec4899", // pink-500
+        color: "#ffc0cb", //pink
         icon: "Building",
     },
     {

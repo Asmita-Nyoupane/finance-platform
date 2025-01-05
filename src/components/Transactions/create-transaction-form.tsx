@@ -34,6 +34,7 @@ import { Switch } from '../ui/switch'
 import { Calendar } from '../ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { format } from 'date-fns'
+import { Textarea } from '../ui/textarea'
 
 type TModifiedAsyncAccount = Omit<TAsycncAccount, 'amount' | 'balance'> & {
     balance: number;
@@ -53,7 +54,6 @@ const CreateTransactionForm = ({ accounts, categories }: TProps) => {
         },
     })
     const onSubmit = async (values: TTransactionSchema) => {
-        console.log("🚀 ~ onSubmit ~ values:", values)
         await fn(values);
         if (error && !!data && !loading) {
             toast.error(error);
@@ -126,7 +126,7 @@ const CreateTransactionForm = ({ accounts, categories }: TProps) => {
                         name="amount"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Account Name</FormLabel>
+                                <FormLabel>Amount</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Enter amount " {...field} />
                                 </FormControl>
@@ -164,6 +164,21 @@ const CreateTransactionForm = ({ accounts, categories }: TProps) => {
                         )}
                     />
                 </div>
+                <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Write something about your transaction" {...field} cols={5} value={field.value ?? ''} />
+                            </FormControl>
+
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                     <FormField
