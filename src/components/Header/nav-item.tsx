@@ -14,12 +14,12 @@ const navLinks = [
     },
     {
         name: "Transactions",
-        link: "/transactions/create",
+        link: "/transaction/create",
     },
-    {
-        name: "Account",
-        link: "/account",
-    },
+    // {
+    //     name: "Account",
+    //     link: "/account",
+    // },
 ];
 const NavItem = () => {
     const path = usePathname()

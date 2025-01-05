@@ -160,7 +160,7 @@ export const defaultCategories = [
         icon: "MoreHorizontal",
     },
 ];
-type TCategory = {
+export type TCategory = {
     id: string,
     name: string,
     type: string,
