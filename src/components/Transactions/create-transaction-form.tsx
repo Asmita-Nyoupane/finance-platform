@@ -28,7 +28,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { CalendarIcon, Loader2 } from 'lucide-react'
-import { AccountType, RecurringInterval, TransactionType } from '@prisma/client'
+import { RecurringInterval, TransactionType } from '@prisma/client'
 import { capitaliize, cn } from '@/lib/utils'
 import { Switch } from '../ui/switch'
 import { Calendar } from '../ui/calendar'
@@ -54,12 +54,19 @@ const CreateTransactionForm = ({ accounts, categories }: TProps) => {
         },
     })
     const onSubmit = async (values: TTransactionSchema) => {
-        await fn(values);
-        if (error && !!data && !loading) {
+        try {
+            await fn(values);
+            if (data && !loading) {
+                toast.success("New transaction successfully")
+                router.back()
+            } else {
+                console.log("🚀 ~ onSubmit ~ error:", error)
+                toast.error(error);
+            }
+
+        } catch (error: any) {
+            console.log("🚀 ~ onSubmit ~ error:", error)
             toast.error(error);
-        } else {
-            toast.success("New account successfully")
-            router.back()
         }
     };
     return (

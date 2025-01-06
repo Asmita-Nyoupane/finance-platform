@@ -29,13 +29,13 @@ export const createTransaction = async (data: TTransaction) => {
             if (decision.reason.isRateLimit()) {
                 const { remaining, reset } = decision.reason;
                 console.error({
-                    code: "RATE_limit_EXCEEDRD",
+                    code: "RATE_LIMIT_EXCEEDRD",
                     details: {
                         remaining,
                         resetInSeconds: reset
                     }
                 })
-                throw new Error("Tpp many request.Please try again later")
+                throw new Error("Too many request.Please try again later")
             }
             throw new Error("Request Blocked")
         }
@@ -74,6 +74,7 @@ export const createTransaction = async (data: TTransaction) => {
         return { success: true, data: seralizedTransaction(transaction) }
 
     } catch (error: any) {
+        console.log("🚀 ~ createTransaction ~ error:", error)
         throw error
     }
 }
