@@ -1,12 +1,13 @@
 import { serve } from "inngest/next";
 import { inngest } from "../../../inngest/client";
-import { checkBudgetalert } from "@/inngest/functions";
+import { checkBudgetalert, helloWorld } from "@/inngest/functions";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
     client: inngest,
     functions: [
-        checkBudgetalert
+        checkBudgetalert,
+        helloWorld
     ],
 });
 console.log("inngest route called")

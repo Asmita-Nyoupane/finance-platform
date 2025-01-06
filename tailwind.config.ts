@@ -61,18 +61,18 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			animation: {
-				float: "float 3s ease-in-out infinite",
-				fadeIn: "fadeIn 2s ease-in-out",
-				"bounce-slow": "bounce 2s infinite",
+				gradient: "gradientBG 3s infinite",
+				border: "borderMove 2s linear infinite",
 			},
 			keyframes: {
-				float: {
-					"0%, 100%": { transform: "translateY(0)" },
-					"50%": { transform: "translateY(-10px)" },
+				gradientBG: {
+					"0%, 100%": { backgroundPosition: "0% 50%" },
+					"50%": { backgroundPosition: "100% 50%" },
 				},
-				fadeIn: {
-					"0%": { opacity: "0" },
-					"100%": { opacity: " 1" },
+				borderMove: {
+					"0%": { borderColor: "pink" },
+					"50%": { borderColor: "purple" },
+					"100%": { borderColor: "pink" },
 				},
 			},
 		}

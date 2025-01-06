@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const TransactionSchema = z.object({
     type: z.nativeEnum(TransactionType),
-    amount: z.string().transform((val) => Number(val)),
+    amount: z.number(),
     accountId: z.string(),
     description: z.string().nullable().optional(),
     date: z.date(),

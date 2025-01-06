@@ -1,4 +1,4 @@
-import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
+import arcjet, { tokenBucket } from "@arcjet/next";
 
 
 export const aj = arcjet({
@@ -15,4 +15,6 @@ export const aj = arcjet({
         }),
     ],
 });
+
+
 
