@@ -1,4 +1,5 @@
 "use server"
+import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
@@ -13,39 +14,41 @@ export const getAllAccounts = async () => {
         }
     })
     if (!user) throw new Error('User not found');
+    try {
 
-    const accounts = await db.account.findMany({
-        where: {
-            userId: user.id,
+        const accounts = await db.account.findMany({
+            where: {
+                userId: user.id,
 
-        },
-        orderBy: {
-            createdAt: "desc"
-        },
-        include: {
-            _count: {
-                select: {
-                    transactions: true
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                _count: {
+                    select: {
+                        transactions: true
+                    }
                 }
-            }
 
+            }
+        })
+        return accounts.map(seralizedAccount);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
         }
-    })
-    return accounts.map(seralizedAccount);
+    }
+
 
 
 }
 export const upateAccount = async (accountId: string) => {
     try {
 
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
         await db.account.updateMany({
             where: {
                 userId: user.id,
@@ -68,22 +71,18 @@ export const upateAccount = async (accountId: string) => {
         return seralizedAccount(account)
 
     } catch (error) {
-        console.log("🚀 ~ upateAccount ~ error:", error)
-
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }
 export const getAccountWithTranaction = async (accountId: string) => {
 
     try {
 
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
 
         if (!accountId) return null
 
@@ -112,8 +111,11 @@ export const getAccountWithTranaction = async (accountId: string) => {
         }
 
     } catch (error) {
-        console.log("🚀 ~ error:", error)
-
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }
 
@@ -121,14 +123,7 @@ export const getAccountWithTranaction = async (accountId: string) => {
 export async function bulkDeleteTransactions(transactionIds: string[]): Promise<{ success: boolean, error?: string }> {
 
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
         const transaction = await db.transaction.findMany({
             where: {
                 id: {
@@ -166,9 +161,11 @@ export async function bulkDeleteTransactions(transactionIds: string[]): Promise<
         revalidatePath("/dashboard")
         revalidatePath("/account/[id]")
         return { success: true }
-    } catch (error: any) {
-        console.log("🚀 ~ bulkDeleteTransactions ~ error:", error)
-        return { success: false, error: error.message }
-
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }

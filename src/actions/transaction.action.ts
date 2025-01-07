@@ -1,5 +1,6 @@
 "use server"
 import { aj } from "@/app/api/arcjet/route";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedTransaction } from "@/lib/utils";
 import { TTransaction } from "@/types/global-types";
@@ -14,18 +15,11 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export const createTransaction = async (data: TTransaction) => {
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
         // arject to add rate limit
         const req = await request()
 
-        const decision = await aj.protect(req, { userId, requested: 1 }); // Deduct 1 tokens from the bucket
+        const decision = await aj.protect(req, { userId: user.id, requested: 1 }); // Deduct 1 tokens from the bucket
 
         if (decision.isDenied()) {
             if (decision.reason.isRateLimit()) {
@@ -175,14 +169,7 @@ export async function scanReceipt(file: any) {
 
 export async function getTransaction(id: string) {
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
 
 
         const transaction = await db.transaction.findUnique({
@@ -203,14 +190,7 @@ export async function getTransaction(id: string) {
 }
 export async function updateTransaction(id: string, data: TTransaction) {
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
 
         const originalTransaction = await db.transaction.findUnique({
             where: {

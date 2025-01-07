@@ -1,4 +1,5 @@
 'use server'
+import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
 import { TAccount, TAsycncAccount } from "@/types/global-types";
@@ -13,14 +14,7 @@ export const createAccount = async (data: TAccount) => {
 
     try {
 
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
         if (!data) throw new Error("Invalid data structure");
         if (typeof data.balance === "undefined") throw new Error("Balance is missing");
         if (isNaN(data.balance)) throw new Error("Invalid balance");
@@ -57,8 +51,31 @@ export const createAccount = async (data: TAccount) => {
         return seralizedAccount(newAccount);
 
     } catch (error) {
-        console.log("🚀 ~ createAccount ~ error:", error)
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
+    }
 
+}
+export async function getDashboarData() {
+    const { userId } = await auth();
+    if (!userId) throw new Error('UnAuthorized');
+    const user = await db.user.findUnique({
+        where: {
+            clerkUserId: userId
+        }
+    })
+    if (!user) throw new Error('User not found');
+    try {
+
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 
 }

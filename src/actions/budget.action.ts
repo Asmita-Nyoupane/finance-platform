@@ -1,19 +1,12 @@
 'use server'
 
+import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export const getCurrentBudget = async (accountId: string) => {
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
         const budget = await db.budget.findFirst({
             where: {
                 userId: user.id
@@ -44,21 +37,16 @@ export const getCurrentBudget = async (accountId: string) => {
         }
 
     } catch (error) {
-        console.log("🚀 ~ getCurrentBudget ~ error:", error)
-        throw error;
-
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }
 export const updateBudget = async (amount: number) => {
     try {
-        const { userId } = await auth();
-        if (!userId) throw new Error('UnAuthorized');
-        const user = await db.user.findUnique({
-            where: {
-                clerkUserId: userId
-            }
-        })
-        if (!user) throw new Error('User not found');
+        const user = await getAuthenticatedUser();
 
         const budget = await db.budget.upsert({
             where: {
@@ -80,7 +68,10 @@ export const updateBudget = async (amount: number) => {
             amount: budget.amount.toNumber()
         }
     } catch (error) {
-        console.log("🚀 ~ updateBudget ~ error:", error)
-        throw error
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }
