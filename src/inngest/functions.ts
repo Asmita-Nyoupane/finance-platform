@@ -1,9 +1,10 @@
 import { db } from "@/lib/prisma";
 import { inngest } from "./client";
 import { POST } from "@/app/api/send/route";
-import Emailtemplate from "../../emails/email-template";
+import Emailtemplate, { TStats } from "../../emails/email-template";
 import { TTransaction } from "@/types/global-types";
 import { calculateNextRecurringDate } from "@/actions/transaction.action";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const checkBudgetalert = inngest.createFunction(
     { id: "check-budget-alert", name: "Check Budget Alert" },
@@ -201,10 +202,8 @@ export const processedRecuringTransaction = inngest.createFunction({
                         )
                     }
                 })
-            })
-
-        })
-
+            });
+        });
     }
 )
 function isTransactionDue(transaction: TTransaction) {
@@ -215,4 +214,129 @@ function isTransactionDue(transaction: TTransaction) {
     // compare with nextDue date
     return nextDue <= today
 
+}
+
+
+export const genrateMonthlyReports = inngest.createFunction({
+    id: "generate-monthly-reports",
+    name: "Generate Monthly Report"
+
+},
+    {
+        cron: "0 0 1 * *"
+    }, async ({ step }) => {
+
+
+        // fetch all user
+        const users = await step.run("fetch-users", async () => {
+            return await db.user.findMany({
+                include: {
+                    accounts: true
+                }
+            })
+        })
+
+        // generate report for all user
+        for (const user of users) {
+            await step.run(`generate-report-${user.id}`, async () => {
+                const lastMonth = new Date();
+                lastMonth.setMonth(lastMonth.getMonth() - 1)
+                const stats = await getMonthlyStats(user.id, lastMonth);
+                const monthName = lastMonth.toLocaleString("default", {
+                    month: "long"
+                });
+                const insights = await generateFinancialInsights(stats, monthName)
+
+                // Send Email
+
+                await POST({
+                    to: user.email || "",
+                    subject: `Your Monthly Financial Report${monthName}`,
+                    react: Emailtemplate({
+                        userName: user.name || "",
+                        type: "monthly-report",
+                        data: {
+                            stats,
+                            month: monthName,
+                            insights
+                        }
+
+                    })
+                })
+            })
+        }
+        return { processed: users.length }
+    })
+
+
+// 1.Generate mothly stats based on category
+const getMonthlyStats = async (userId: string, month: Date) => {
+    const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
+    const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+    const transactions = await db.transaction.findMany({
+        where: {
+            userId,
+            date: {
+                gte: startDate,
+                lte: endDate
+            }
+        }
+    })
+    return transactions.reduce((stats: { totalExpenses: number, totalIncome: number, byCategory: { [key: string]: number }, transactionCount: number }, t) => {
+        const amount = t.amount.toNumber();
+        if (t.type === 'EXPENSE') {
+            stats.totalExpenses += amount;
+            stats.byCategory[t.category] = (stats.byCategory[t.category] || 0 + amount)
+        }
+        else {
+            stats.totalIncome += amount
+        }
+        return stats
+    }, {
+        totalExpenses: 0,
+        totalIncome: 0,
+        byCategory: {},
+        transactionCount: transactions.length
+    })
+
+}
+
+
+// 2. Monthly Report Generation
+async function generateFinancialInsights(stats: TStats, month: string) {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+    Analyze this financial data and provide 3 concise, actionable insights.
+    Focus on spending patterns and practical advice.
+    Keep it friendly and conversational.
+
+    Financial Data for ${month}:
+    - Total Income: $${stats.totalIncome}
+    - Total Expenses: $${stats.totalExpenses}
+    - Net Income: $${stats.totalIncome - stats.totalExpenses}
+    - Expense Categories: ${Object.entries(stats.byCategory)
+            .map(([category, amount]) => `${category}: $${amount}`)
+            .join(", ")}
+
+    Format the response as a JSON array of strings, like this:
+    ["insight 1", "insight 2", "insight 3"]
+  `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        const text = response.text();
+        const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+
+        return JSON.parse(cleanedText);
+    } catch (error) {
+        console.error("Error generating insights:", error);
+        return [
+            "Your highest expense category this month might need attention.",
+            "Consider setting up a budget for better financial management.",
+            "Track your recurring expenses to identify potential savings.",
+        ];
+    }
 }
