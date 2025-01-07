@@ -13,7 +13,7 @@ const poppins = Poppins({
 })
 export const metadata: Metadata = {
   title: "MoneyTrail",
-  description: "Finance platform that helps you manage your money.",
+  description: "Finance platform that helps you to manage uour finannce with",
 };
 
 export default function RootLayout({

@@ -28,17 +28,17 @@ const TransformJourney = () => {
             </div>
 
             {/* Center Content: Animated Image */}
-            <div className="relative flex justify-center items-center h-96 w-full md:w-1/2">
+            <div className="relative flex justify-center items-center  w-auto md:w-1/2">
                 <Image
                     src="/images/ai.jpg"
                     alt="AI with money"
                     height={500}
                     width={500}
-                    className="h-full w-full object-cover rounded-lg shadow-lg hover:scale-110  transition-all duration-300 ease-in-out"
+                    className=" aspect-square object-contained rounded-lg shadow-lg hover:scale-110  transition-all duration-300 ease-in-out"
                 />
-                <h2 className="absolute top-0  text-xl md:text-2xl font-semibold text-white bg-black/60 px-4 py-2 rounded-md animate-fadeIn">
+                {/* <h2 className="absolute top-0  text-xl md:text-2xl font-semibold text-white bg-black/60 px-4 py-2 rounded-md animate-fadeIn">
                     Your Smart Finance Partner
-                </h2>
+                </h2> */}
             </div>
 
 

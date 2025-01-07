@@ -83,7 +83,7 @@ export const createTransaction = async (data: TTransaction) => {
         }
     }
 }
-function calculateNextRecurringDate(startDate: Date, interval: string) {
+export function calculateNextRecurringDate(startDate: Date, interval: string) {
     const date = new Date(startDate)
     switch (interval) {
         case "DAILY":
