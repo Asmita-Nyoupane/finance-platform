@@ -1,4 +1,5 @@
-import { TAsycncAccount, TTransaction } from "@/types/global-types"
+import { TAsycncAccount, TAsyncTransaction, TModiifiedAccount, TTransaction } from "@/types/global-types"
+import { Decimal } from "@prisma/client/runtime/library"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -9,23 +10,22 @@ export function capitaliize(str: String) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLocaleLowerCase()
 
 }
-export const seralizedTransaction = (obj: TTransaction) => {
+
+export const seralizedTransaction = (obj: TAsyncTransaction): TTransaction => {
+
+  return {
+    ...obj,
+    amount: obj.amount.toNumber(),
+  };
 
 
-  if ('amount' in obj && typeof obj.amount !== "number") {
-    return {
-      ...obj,
-      amount: obj.amount?.toNumber()
-    };
-  }
-  return obj;
 }
-export const seralizedAccount = (obj: TAsycncAccount) => {
+export const seralizedAccount = (obj: TModiifiedAccount): TAsycncAccount => {
 
   if ('balance' in obj && typeof obj.balance !== "number") {
     return {
       ...obj,
-      balance: obj.balance.toNumber()
+      balance: Number(obj.balance)
     };
   }
 

@@ -2,7 +2,7 @@
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
-import { TAccount, TAsycncAccount } from "@/types/global-types";
+import { TAccount, TAsycncAccount, TAsyncTransaction, TModiifiedAccount } from "@/types/global-types";
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache";
 
@@ -48,7 +48,7 @@ export const createAccount = async (data: TAccount) => {
         })
         console.log("🚀 ~ createAccount ~ newAccount :", newAccount)
         revalidatePath('/dashboard')
-        return seralizedAccount(newAccount);
+        return seralizedAccount(newAccount as TModiifiedAccount);
 
     } catch (error) {
         if (error instanceof Error) {
@@ -60,15 +60,23 @@ export const createAccount = async (data: TAccount) => {
 
 }
 export async function getDashboarData() {
-    const { userId } = await auth();
-    if (!userId) throw new Error('UnAuthorized');
-    const user = await db.user.findUnique({
-        where: {
-            clerkUserId: userId
-        }
-    })
-    if (!user) throw new Error('User not found');
+    const user = await getAuthenticatedUser();;
     try {
+        // get all user transaction
+        const transactions = await db.transaction.findMany({
+            where: {
+                userId: user.id
+            },
+            orderBy: {
+                date: "desc"
+            }
+        })
+
+        // Cast `transactions` to `TAsyncTransaction[]`
+        const typedTransactions = transactions as TAsyncTransaction[];
+
+        // Map over the typed transactions and serialize them
+        return typedTransactions.map(seralizedTransaction);
 
     } catch (error) {
         if (error instanceof Error) {

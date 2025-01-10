@@ -38,7 +38,7 @@ import { Textarea } from '../ui/textarea'
 import ScanReceipt from './scan-receipt'
 import { Decimal } from '@prisma/client/runtime/library'
 
-type TModifiedAsyncAccount = Omit<TAsycncAccount, 'amount' | 'balance'> & {
+export type TModifiedAsyncAccount = Omit<TAsycncAccount, 'amount' | 'balance'> & {
     balance: number;
 };
 type TProps = {

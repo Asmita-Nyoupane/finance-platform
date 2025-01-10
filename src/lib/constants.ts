@@ -2,6 +2,7 @@ import { TDateRange } from "@/components/Transactions/transaction-chart";
 
 
 export const LIMIT = 10;
+export const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', "#ef4444", "#f97316", "#84cc16", "#06b6d4", "#ec4899",];
 
 export const DATE_RANGE: TDateRange = {
     '7D': { label: "Last 7 Days", days: 7 },

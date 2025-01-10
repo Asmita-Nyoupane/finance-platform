@@ -82,7 +82,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }: TProps) => {
             </CardHeader>
             <CardContent className='space-y-2'>
 
-                <Progress value={percentUsed} className={`${percentUsed > 90 ? "bg-red-500" : (percentUsed >= 75 ? "bg-yellow-500" : "bg-green-500")}`} />
+                <Progress value={percentUsed ?? Number(percentUsed).toFixed(2)} className={`${percentUsed > 90 ? "bg-red-500" : (percentUsed >= 75 ? "bg-yellow-500" : "bg-green-500")}`} />
 
                 <p className='text-left text-muted-foreground text-sm'>{percentUsed}% used</p>
             </CardContent>

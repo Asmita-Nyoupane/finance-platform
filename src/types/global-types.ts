@@ -11,20 +11,24 @@ export type TAsycncAccount = {
     name: string;
     type: AccountType;
     isDefault: boolean;
-    balance: Decimal,
+    balance: number,
     userId: string;
     id: string;
-    amount?: Decimal
+    amount?: number
     createdAt?: Date;
     updatedAt?: Date;
     transaction?: TTransaction[]
+}
+export type TModiifiedAccount = TAsycncAccount & {
+    balance: Decimal,
+    amount: Decimal
 }
 // Transaction Type
 export type TTransaction = {
     id: string;
     type: TransactionType;
     userId: string;
-    amount: Decimal // Using `number` since JavaScript doesn't support `Decimal` natively
+    amount: number
     accountId: string;
     description?: string | null;
     date: Date;
@@ -38,6 +42,9 @@ export type TTransaction = {
     createdAt: Date;
     updatedAt: Date;
 };
+export type TAsyncTransaction = TTransaction & {
+    amount: Decimal
+}
 
 // Budget Type
 export type TBudget = {

@@ -3,7 +3,7 @@ import { aj } from "@/app/api/arcjet/route";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedTransaction } from "@/lib/utils";
-import { TTransaction } from "@/types/global-types";
+import { TAsyncTransaction, TTransaction } from "@/types/global-types";
 import { request } from "@arcjet/next";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from '@google/generative-ai'
@@ -67,7 +67,7 @@ export const createTransaction = async (data: TTransaction) => {
         })
         revalidatePath('/dashboard')
         revalidatePath(`/account/${transaction.accountId}`)
-        return { success: true, data: seralizedTransaction(transaction) }
+        return { success: true, data: { ...transaction, amount: transaction.amount.toNumber() } }
 
     } catch (error) {
         if (error instanceof Error) {
@@ -179,7 +179,7 @@ export async function getTransaction(id: string) {
             }
         })
         if (!transaction) throw new Error("Transaction not found")
-        return seralizedTransaction(transaction)
+        return seralizedTransaction(transaction as TAsyncTransaction)
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -208,7 +208,7 @@ export async function updateTransaction(id: string, data: TTransaction) {
 
         const oldBalanceChange = originalTransaction.type === "EXPENSE" ? -originalTransaction.amount.toNumber() : originalTransaction.amount.toNumber();
 
-        const newBalanceChange = data.type === 'EXPENSE' ? -data.amount.toNumber() : data.amount.toNumber()
+        const newBalanceChange = data.type === 'EXPENSE' ? -data.amount : data.amount
 
         const netBalanceChange = newBalanceChange - oldBalanceChange;
 
@@ -233,7 +233,7 @@ export async function updateTransaction(id: string, data: TTransaction) {
         })
         revalidatePath('/dashboard')
         revalidatePath(`/account/${transaction.accountId}`)
-        return { success: true, data: seralizedTransaction(transaction) }
+        return { success: true, data: seralizedTransaction(transaction as TAsyncTransaction) }
 
 
     } catch (error) {
