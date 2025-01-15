@@ -46,22 +46,22 @@ model Account {
   @@map("accounts")
 }
 
- export enum AccountType {
+ enum AccountType {
   CURRENT
   SAVING
 }
 
- export enum TransactionType {
+  enum TransactionType {
   INCOME
   EXPENSE
 }
 
-  export enum TransactionStatus {
+  enum TransactionStatus {
   COMPLETED
   PENDING
   FAILED
 }
- export enum RecurringInterval {
+ enum RecurringInterval {
   DAILY
   WEEKLY
   MONTHLY
