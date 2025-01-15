@@ -94,7 +94,7 @@ export default function Emailtemplate({
                         </Section>
 
                         <Button
-                            href="https://example.com/view-report"
+                            href={process.env.APP_URL}
                             style={{
                                 backgroundColor: "#007bff",
                                 color: "#fff",
@@ -154,7 +154,7 @@ export default function Emailtemplate({
                         </Section>
 
                         <Button
-                            href="https://example.com/manage-budget"
+                            href={process.env.APP_URL}
                             style={{
                                 backgroundColor: "#007bff",
                                 color: "#fff",

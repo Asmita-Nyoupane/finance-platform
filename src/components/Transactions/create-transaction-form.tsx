@@ -108,9 +108,9 @@ const CreateTransactionForm = ({ accounts, categories, editedId, initialData }: 
                 toast.error(error);
             }
 
-        } catch (error: any) {
+        } catch (error) {
             console.log("🚀 ~ onSubmit ~ error:", error)
-            toast.error("Unable to create transaction", error);
+            toast.error("Unable to create transaction: " + String(error));
         }
     };
     const handleScanComplete = (scanData: TScanData) => {
@@ -131,7 +131,7 @@ const CreateTransactionForm = ({ accounts, categories, editedId, initialData }: 
 
     useEffect(() => {
         form.setValue("category", initialData.category)
-    }, [initialData.category])
+    }, [initialData.category, form])
 
     return (
         <div className='space-y-6'>

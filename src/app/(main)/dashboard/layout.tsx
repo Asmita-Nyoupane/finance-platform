@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react'
-import { BarLoader } from 'react-spinners'
 import DashboardPage from './page'
 import Loader from '@/app/loader'
 

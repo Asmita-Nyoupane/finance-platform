@@ -6,6 +6,7 @@ import Header from "@/components/Header/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner";
+import BottomNav from "@/components/Header/bottom-header";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
@@ -34,6 +35,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header />
+            <BottomNav />
             <main className="min-h-screen  ">
               <Toaster richColors />
 

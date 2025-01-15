@@ -26,8 +26,12 @@ export const checkUser = async () => {
             return newUser;
         }
 
+        // eslint-disable-next-line
     } catch (error: any) {
-        console.log("🚀 ~ checkUser ~ error:", error)
-        throw new error
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }

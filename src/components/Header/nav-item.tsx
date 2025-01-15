@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react'
 import { House, LayoutDashboard, SquarePen } from 'lucide-react';
 import { Button } from '../ui/button';
-const navLinks = [
+export const navLinks = [
     {
         name: "Home",
         icon: House,
@@ -20,10 +20,7 @@ const navLinks = [
         icon: SquarePen,
         link: "/transaction/create",
     },
-    // {
-    //     name: "Account",
-    //     link: "/account",
-    // },
+
 ];
 const NavItem = () => {
     const path = usePathname()
@@ -39,7 +36,7 @@ const NavItem = () => {
 
                     {/* Show Button and Icon only on medium and larger screens */}
                     <Button
-                        className={`text-lg  hidden md:flex items-center gap-2${path === link.link ? "text-brand  font-bold " : " text-primary"}`}
+                        className={`text-lg  hidden  md:flex items-center gap-2${path === link.link ? "text-brand  font-bold " : " text-primary"}`}
                         variant={`${link.link === "/transaction/create" ? "outline" : "ghost"}`}
 
                     >
@@ -47,8 +44,8 @@ const NavItem = () => {
                         <span className='text-base'>{link.name}</span>
                     </Button>
 
-                    {/* Show Text Only on Small Screens */}
-                    <span className="md:hidden text-md">{link.name}</span>
+                    {/* Show Text Only on Small Screens
+                    <span className="md:hidden text-md">{link.name}</span> */}
                 </Link>
             ))}
         </div>

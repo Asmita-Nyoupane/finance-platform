@@ -2,8 +2,7 @@
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
-import { TAccount, TAsycncAccount, TAsyncTransaction, TModiifiedAccount } from "@/types/global-types";
-import { auth } from "@clerk/nextjs/server"
+import { TAccount, TAsyncTransaction, TModiifiedAccount } from "@/types/global-types";
 import { revalidatePath } from "next/cache";
 
 

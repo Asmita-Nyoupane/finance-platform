@@ -4,7 +4,6 @@ import React, { useMemo, useState } from 'react'
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -16,7 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DATE_RANGE } from '@/lib/constants';
 import { endOfDay, format, subDays } from 'date-fns';
 type TProps = {

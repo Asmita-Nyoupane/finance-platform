@@ -1,12 +1,11 @@
 import { TAsycncAccount, TAsyncTransaction, TModiifiedAccount, TTransaction } from "@/types/global-types"
-import { Decimal } from "@prisma/client/runtime/library"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-export function capitaliize(str: String) {
+export function capitaliize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLocaleLowerCase()
 
 }
@@ -22,12 +21,32 @@ export const seralizedTransaction = (obj: TAsyncTransaction): TTransaction => {
 }
 export const seralizedAccount = (obj: TModiifiedAccount): TAsycncAccount => {
 
-  if ('balance' in obj && typeof obj.balance !== "number") {
-    return {
-      ...obj,
-      balance: Number(obj.balance)
-    };
-  }
+  return {
+    ...obj,
+    balance: obj.balance.toNumber()
+  };
+}
 
-  return obj;
+
+
+
+export function calculateNextRecurringDate(startDate: Date, interval: string) {
+  const date = new Date(startDate)
+  switch (interval) {
+    case "DAILY":
+      date.setDate(date.getDate() + 1)
+      break;
+    case "WEEKLY":
+      date.setDate(date.getDate() + 7)
+      break;
+    case "MONTHLY":
+      date.setMonth(date.getMonth() + 1)
+      break;
+    case "YEARLY":
+      date.setFullYear(date.getFullYear() + 1)
+      break;
+    default:
+      break;
+  }
+  return date
 }

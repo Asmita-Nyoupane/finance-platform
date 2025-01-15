@@ -25,11 +25,11 @@ const ScanReceipt = ({ onScanComplete }: TProps) => {
                 onScanComplete(data)
                 toast.success("Receipt scanned successfully")
             } else {
-                toast.error(error)
+                toast.error(String(error))
             }
 
-        } catch (error: any) {
-            toast.error(error)
+        } catch (error) {
+            toast.error(String(error))
             console.log("🚀 ~ handleReceiptScan ~ error:", error)
 
         }

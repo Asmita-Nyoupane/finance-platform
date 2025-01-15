@@ -1,7 +1,9 @@
 "use server"
+
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { seralizedAccount, seralizedTransaction } from "@/lib/utils";
+import { seralizedAccount } from "@/lib/utils";
+import { TModiifiedAccount } from "@/types/global-types";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
@@ -33,7 +35,10 @@ export const getAllAccounts = async () => {
 
             }
         })
-        return accounts.map(seralizedAccount);
+        return accounts.map(account => ({
+            ...account,
+            balance: account.balance.toNumber()
+        }));
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -68,7 +73,7 @@ export const upateAccount = async (accountId: string) => {
             }
         })
         revalidatePath("/")
-        return seralizedAccount(account)
+        return seralizedAccount(account as TModiifiedAccount)
 
     } catch (error) {
         if (error instanceof Error) {
@@ -105,9 +110,16 @@ export const getAccountWithTranaction = async (accountId: string) => {
                 }
             }
         })
+        const serializedTransactions = account?.transactions.map(transaction => ({
+            ...transaction,
+            amount: transaction.amount.toNumber(),
+        }));
         return {
-            ...(account ? seralizedAccount(account) : {}),
-            transactions: account?.transactions.map(seralizedTransaction)
+            ...(account ? {
+                ...account,
+                balance: account.balance.toNumber(),
+            } : {}),
+            transactions: serializedTransactions
         }
 
     } catch (error) {

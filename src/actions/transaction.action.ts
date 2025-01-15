@@ -1,11 +1,12 @@
 "use server"
-import { aj } from "@/app/api/arcjet/route";
+
+import { aj } from "@/lib/arcjet";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { seralizedTransaction } from "@/lib/utils";
+import { calculateNextRecurringDate, seralizedTransaction } from "@/lib/utils";
 import { TAsyncTransaction, TTransaction } from "@/types/global-types";
 import { request } from "@arcjet/next";
-import { auth } from "@clerk/nextjs/server";
+
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { revalidatePath } from "next/cache";
 
@@ -77,30 +78,11 @@ export const createTransaction = async (data: TTransaction) => {
         }
     }
 }
-export function calculateNextRecurringDate(startDate: Date, interval: string) {
-    const date = new Date(startDate)
-    switch (interval) {
-        case "DAILY":
-            date.setDate(date.getDate() + 1)
-            break;
-        case "WEEKLY":
-            date.setDate(date.getDate() + 7)
-            break;
-        case "MONTHLY":
-            date.setMonth(date.getMonth() + 1)
-            break;
-        case "YEARLY":
-            date.setFullYear(date.getFullYear() + 1)
-            break;
-        default:
-            break;
-    }
-    return date
-}
+
 
 
 // Scan Receipt
-export async function scanReceipt(file: any) {
+export async function scanReceipt(file: File) {
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -218,7 +200,7 @@ export async function updateTransaction(id: string, data: TTransaction) {
                 data: {
                     ...data,
                     userId: user.id,
-                    nextRecurringDate: data.isRecurring && data.recurringInterval ? calculateNextRecurringDate(data.date, data.recurringInterval) : null
+                    nextRecurringDate: data.isRecurring && data.recurringInterval ? await calculateNextRecurringDate(data.date, data.recurringInterval) : null
                 }
             })
             await tx.account.update({

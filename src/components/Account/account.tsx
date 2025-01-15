@@ -1,18 +1,11 @@
 "use client";
-import React, { Suspense } from "react";
+import React from "react";
 import CreateAccountForm from "@/components/Account/create-account-form";
 import CustomModal from "@/components/Global/custom-modal";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { TAccount, TAsycncAccount } from "@/types/global-types";
-import Link from "next/link";
-import { Switch } from "../ui/switch";
-import { capitaliize } from "@/lib/utils";
-import { useFetch } from "@/hooks/use-fetch";
-import { toast } from "sonner";
-import { upateAccount } from "@/actions/account.action";
-import TransactionDetails from "../Transactions/transaction-detail";
-import { BarLoader } from "react-spinners";
+
+
 
 
 const Account = () => {
@@ -48,42 +41,10 @@ const Account = () => {
     );
 };
 
+export default Account
 
 
-type TProps = {
-    id: string
-}
-
-const MyAccount = ({ account }: { account: TAccount & TProps }) => {
-    const { id, name, balance, type, isDefault } = account
-    const { data, loading, error, fn } = useFetch(upateAccount)
-    const handleDefaultChange = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        await fn(id)
-        if (error && !!data && !loading) {
-            toast.error(error);
-        } else {
-            toast.success("Default account updated successfully")
-        }
-    }
-    return (
-        <Link href={`account/${id}`}>
-            <Card className="hover:shadow-xl  hover:scale-y-105 transition-all duration-300  hover:bg-primary-foreground min-w-[260px] min-h-[150px] ease-in-out">
-                <CardHeader className="flex  flex-row justify-between  gap-5 items-center">
-                    <CardTitle className="subtitle text-wrap ">{capitaliize(name)}</CardTitle>
-                    <Switch checked={isDefault} color={isDefault ? "bg-brand" : ""} disabled={loading} onClick={handleDefaultChange} />
-
-                </CardHeader>
-                <CardContent className="flex justify-start  flex-col gap-1 items-start font-semibold">
-                    <p className="flex-center gap-1"> <span>Total Balance :</span> <span className="font-bold text-lg">
-                        $ {balance}</span> </p>
-                    <p className="text-sm md:text-md text-muted-foreground">{capitaliize(type)} Account</p>
-                </CardContent>
-            </Card>
-
-        </Link>
-    )
-}
 
 
-export { MyAccount, Account }
+
+

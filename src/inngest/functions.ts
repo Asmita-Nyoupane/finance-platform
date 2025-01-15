@@ -1,10 +1,12 @@
 import { db } from "@/lib/prisma";
 import { inngest } from "./client";
-import { POST } from "@/app/api/send/route";
+
 import Emailtemplate, { TStats } from "../../emails/email-template";
 import { TTransaction } from "@/types/global-types";
-import { calculateNextRecurringDate } from "@/actions/transaction.action";
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { calculateNextRecurringDate } from "@/lib/utils";
+import { SendEmail } from "@/actions/send-email";
 
 export const checkBudgetalert = inngest.createFunction(
     { id: "check-budget-alert", name: "Check Budget Alert" },
@@ -58,7 +60,7 @@ export const checkBudgetalert = inngest.createFunction(
 
                 if (percentUsed >= 80 && (!budget.lastAlertSent || isNewMonth(new Date(budget.lastAlertSent), new Date()))) {
                     // send email to user
-                    await POST({
+                    await SendEmail({
                         to: budget.user.email || "",
                         subject: `Budget Alert for ${defaultAccount.name}`,
                         react: Emailtemplate({
@@ -164,7 +166,7 @@ export const processedRecuringTransaction = inngest.createFunction({
                     account: true
                 }
             })
-            if (!transaction || !isTransactionDue(transaction)) return
+            if (!transaction || !isTransactionDue({ ...transaction, amount: transaction.amount.toNumber() })) return
             await db.$transaction(async (tx) => {
                 //  create new transaction
                 await tx.transaction.create({
@@ -249,7 +251,7 @@ export const genrateMonthlyReports = inngest.createFunction({
 
                 // Send Email
 
-                await POST({
+                await SendEmail({
                     to: user.email || "",
                     subject: `Your Monthly Financial Report${monthName}`,
                     react: Emailtemplate({

@@ -14,6 +14,7 @@ import { useFetch } from '@/hooks/use-fetch'
 import { updateBudget } from '@/actions/budget.action'
 import { toast } from 'sonner'
 import { Progress } from '../ui/progress'
+import { TBudget } from '@/types/global-types'
 
 
 type TProps = {
@@ -24,7 +25,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }: TProps) => {
 
     const [isEditing, setIsEditing] = useState(false)
     const [newBudget, setNewBudget] = useState(initialBudget?.toString() || "")
-    const { fn, error, loading } = useFetch(updateBudget)
+    const { fn, error, loading } = useFetch<TBudget>(updateBudget)
 
     const percentUsed = initialBudget ? ((currentExpenses / initialBudget) * 100)
         : 0
@@ -39,6 +40,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }: TProps) => {
             setIsEditing(false)
             toast.success('Budget Updated')
         } catch (error) {
+            console.log("🚀 ~ handleBudgetUpdate ~ error:", error)
             toast.error('Failed to update budget')
         }
 

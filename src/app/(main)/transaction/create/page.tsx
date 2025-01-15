@@ -6,15 +6,15 @@ import { defaultCategories } from '@/data/category';
 import { TransactionStatus, TransactionType } from '@prisma/client';
 import React, { Suspense } from 'react'
 type TProps = {
-    searchParams: {
-        edit: string
-    }
-}
+    searchParams?: Promise<{ edit: string }>
+};
+
 
 const CreateTransactionPage = async ({ searchParams }: TProps) => {
 
 
-    const editedId = searchParams?.edit
+    const resolvedSearchParams = await searchParams;
+    const editedId = resolvedSearchParams?.edit;
     const accounts = (await getAllAccounts()).map(account => ({
         ...account,
         balance: Number(account.balance)
@@ -47,7 +47,7 @@ const CreateTransactionPage = async ({ searchParams }: TProps) => {
 
         }
     }
-    console.log("🚀 ~ CreateTransactionPage ~ initialData:", initialData)
+
     return (
         <div className=' w-11/12 md:w-10/12 lg:w-8/12 mx-auto px-4 my-14 flex flex-col gap-10'>
 

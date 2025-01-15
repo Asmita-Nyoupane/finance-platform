@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/prisma";
-import { TTransaction } from "@/types/global-types";
+import { TAsyncTransaction, TTransaction } from "@/types/global-types";
 import { TransactionStatus, TransactionType } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { subDays } from "date-fns";
@@ -78,7 +78,7 @@ export async function seedTransactions() {
                 };
 
                 totalBalance += type === "INCOME" ? amount : -amount;
-                transactions.push(transaction);
+                transactions.push(transaction as TAsyncTransaction);
             }
         }
 
@@ -105,6 +105,7 @@ export async function seedTransactions() {
             success: true,
             message: `Created ${transactions.length} transactions`,
         };
+        // eslint-disable-next-line
     } catch (error: any) {
         console.error("Error seeding transactions:", error);
         return { success: false, error: error.message };

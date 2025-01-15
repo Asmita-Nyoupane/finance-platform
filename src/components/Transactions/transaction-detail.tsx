@@ -41,16 +41,17 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
             toast.success('Transactions deleted successfully')
 
         } catch (error) {
+            console.log("🚀 ~ handleBulkDelete ~ error:", error)
             toast.error('Error deleting transactions')
         }
     }
     const totalPage = Math.ceil(transactions.length / LIMIT)
 
     const handleClearFilter = () => {
-        setSearchTerm(""),
-            setRecurringFilter(""),
-            setTypeFilter(""),
-            setSelectedIds([])
+        setSearchTerm("");
+        setRecurringFilter("");
+        setTypeFilter("");
+        setSelectedIds([]);
     }
     // function to filter and sort the data
     const filteredAndSortedTransaction = useMemo(() => {
@@ -101,7 +102,7 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
         return result
 
 
-    }, [searchTerm, recurringFilter, typeFilter, selectedIds, sortCofig])
+    }, [searchTerm, recurringFilter, typeFilter, sortCofig, transactions])
 
 
 
@@ -153,7 +154,7 @@ const TransactionDetails = ({ transactions }: { transactions: TTransaction[] }) 
             <div className="container mx-auto py-10">
                 <DataTable filteredAndSortedTransaction={filteredAndSortedTransaction.slice(page, page + LIMIT)} selectedIds={selectedIds} setSelectedIds={setSelectedIds} sortCofig={sortCofig} setSortConfig={setSortConfig} deleteFn={fn} />
             </div>
-            <TablePagination setPage={setPage} totalPage={totalPage} />
+            {filteredAndSortedTransaction?.length > 0 && <TablePagination setPage={setPage} totalPage={totalPage} />}
         </div>
     )
 }
