@@ -8,13 +8,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { calculateNextRecurringDate } from "@/lib/utils";
 import { SendEmail } from "@/actions/send-email";
 
-export const checkBudgetalert = inngest.createFunction(
+export const checkBudgetAlert = inngest.createFunction(
     { id: "check-budget-alert", name: "Check Budget Alert" },
     { cron: "0 */6 * * *" },
 
     async ({ step }) => {
         const budgets = await step.run("fetch-budget", async () => {
-
+            console.log("Fetching budgets...");
             return await db.budget.findMany({
                 include: {
                     user: {
@@ -34,6 +34,7 @@ export const checkBudgetalert = inngest.createFunction(
             const defaultAccount = budget.user.accounts[0];
             if (!defaultAccount) continue; // skip if no default account
             await step.run(`check-budget-${budget.id}`, async () => {
+                console.log("Check the budget")
                 const currentDate = new Date();
                 const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
                 const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
@@ -57,6 +58,11 @@ export const checkBudgetalert = inngest.createFunction(
                 const totalExpenses = expenses._sum.amount ? expenses._sum.amount.toNumber() : 0;
                 const budgetAmount = Number(budget.amount);
                 const percentUsed = (totalExpenses / Number(budgetAmount)) * 100;
+                console.log("email data",
+                    budget.user.email,
+                    totalExpenses,
+                    percentUsed
+                )
 
                 if (percentUsed >= 80 && (!budget.lastAlertSent || isNewMonth(new Date(budget.lastAlertSent), new Date()))) {
                     // send email to user

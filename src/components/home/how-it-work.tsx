@@ -4,7 +4,7 @@ import { Card } from "../ui/card";
 
 const HowItWorks = () => {
     return (
-        <div className="flex flex-col items-center gap-8 p-6">
+        <div className="flex flex-col items-center gap-8 p">
             {/* Heading Section */}
             <div className="text-center">
                 <h2 className="title ">
@@ -16,7 +16,7 @@ const HowItWorks = () => {
             </div>
 
             {/* Steps Section */}
-            <div className="flex flex-col md:flex-row md:flex-wrap gap-12 justify-center items-center w-10/12">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-12 justify-center items-center ">
                 {howItWorks.map((item, index) => (
                     <Card
                         key={index}
