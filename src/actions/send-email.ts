@@ -7,11 +7,10 @@ import { Resend } from 'resend';
 interface PostParams {
     to: string;
     subject: string;
-    // eslint-disable-next-line
     react: React.ReactNode
 
 }
-console.log("Resend API Key: ", process.env.RESEND_API_KEY ? "Exists" : "Not found");
+
 
 
 export async function SendEmail({ to, subject, react }: PostParams) {
@@ -32,6 +31,6 @@ export async function SendEmail({ to, subject, react }: PostParams) {
         //  @typescript-eslint/no-explicit-any
     } catch (error) {
         console.log("🚀 ~ POST ~ error:", error)
-        return { success: false, error: (error as any)?.message || error };
+        return { success: false, error: (error as Error)?.message || error };
     }
 }

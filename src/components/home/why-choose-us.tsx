@@ -23,7 +23,7 @@ const WhyChooseUs = () => {
 
 
                 <p className=" w-full text-start text-sm md:text-base lg:text-lg text-muted-foreground  tracking-wide leading-relaxed ">
-                    MoneyTrail is your ultimate financial companion, designed to simplify and enhance how you manage your money. With features like multiple account management, AI-powered bill scanning, and budget alerts, we empower you to take control of your finances effortlessly. Our platform combines cutting-edge technology with robust security, ensuring your data stays private and protected. Whether you're budgeting for a goal, tracking daily expenses, or managing business finances, MoneyTrail provides a seamless, reliable, and intuitive solution tailored to your needs. Choose MoneyTrail and make every dollar count!
+                    MoneyTrail is your ultimate financial companion, designed to simplify and enhance how you manage your money. With features like multiple account management, AI-powered bill scanning, and budget alerts, we empower you to take control of your finances effortlessly. Our platform combines cutting-edge technology with robust security, ensuring your data stays private and protected. Whether you&apos;re budgeting for a goal, tracking daily expenses, or managing business finances, MoneyTrail provides a seamless, reliable, and intuitive solution tailored to your needs. Choose MoneyTrail and make every dollar count!
                 </p>
             </div>
         </div>
